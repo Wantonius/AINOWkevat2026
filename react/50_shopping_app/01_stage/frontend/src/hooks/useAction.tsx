@@ -17,26 +17,92 @@ const useAction = () => {
 	})
 	
 	const [urlRequest,setUrlRequest] = useState<UrlRequest>({
-		request:new Request({},""),
+		request:new Request("",{}),
 		action:""
 	})
 	
-	useEffect(() => {},[urlRequest]);
+	useEffect(() => {
+		getList();
+	},[]);
+	
+	useEffect(() => {
+		
+		const fetchData = async () => {
+			const response = await fetch(urlRequest.request);
+			if(!response) {
+				console.log("Server did not respond");
+				return;
+			}
+			if(response.ok) {
+				switch(UrlRequest.action) {
+					case "getlist":{
+						const temp = await response.json();
+						if(!temp) {
+							console.log("Failed to parse json");
+							return;
+						}
+						const list = temp as ShoppingItem[];
+						setState({
+							list:list
+						})
+						return;
+					}
+					case "additem":
+					case "removeitem":
+					case "edititem": {
+						getList();
+						return;
+					}
+				}
+			} else {
+				console.log("Server responded with a status "+response.status);
+			}
+		}
+		
+		fetchData();
+		
+	},[urlRequest]);
 	
 	const getList = () => {
-		
+		setUrlRequest({
+			request:new Request("/api/shopping"),
+			action:"getlist"
+		})
 	}
 	
 	const add = (item:ShoppingItem) => {
-		
+		setUrlRequest({
+			request:new Request("/api/shopping",{
+				method:"POST",
+				headers:{
+					"Content-type":"application/json"
+				},
+				body:JSON.stringify(item)
+			}),
+			action:"additem"
+		})	
 	}
 	
 	const remove = (id:number) => {
-		
+		setUrlRequest({
+			request:new Request("/api/shopping/"+id,{
+				method:"DELETE"
+			}),
+			action:"removeitem"
+		})
 	}
 	
 	const edit = (item:ShoppingItem) => {
-		
+		setUrlRequest({
+			request:new Request("/api/shopping/"+item.id,{
+				method:"PUT",
+				headers:{
+					"Content-type":"application/json"
+				},
+				body:JSON.stringify(item)
+			}),
+			action:"edititem"
+		})
 	}
 	
 	return {state,add,remove,edit}
