@@ -34,7 +34,7 @@ const useAction = () => {
 				return;
 			}
 			if(response.ok) {
-				switch(UrlRequest.action) {
+				switch(urlRequest.action) {
 					case "getlist":{
 						const temp = await response.json();
 						if(!temp) {
