@@ -8,19 +8,22 @@ app.use(express.json());
 let database = [];
 let id = 100;
 
-//ShoppingItem
-//type:String
-//count:number
-//price:number
-//id:number
+//SHOPPING ITEM
+//type string
+//count number
+//price number
+//id number
 
-//CRUD
-//get items
+//SHOPPING API
+//GET 		/api/shopping		get shopping ListFormat
+//POST		/api/shopping		add new item
+//DELETE	/api/shopping/:id	delete item with id
+//PUT 		/api/shopping/:id	edit item with id
+
 app.get("/api/shopping",function(req,res) {
 	return res.status(200).json(database);
 })
 
-//add new item
 app.post("/api/shopping",function(req,res) {
 	let item = {
 		type:req.body.type,
@@ -30,17 +33,16 @@ app.post("/api/shopping",function(req,res) {
 	}
 	id++;
 	database.push(item);
+	console.log(database);
 	return res.status(201).json(item);
 })
 
-//remove item
 app.delete("/api/shopping/:id",function(req,res) {
 	let tempId = parseInt(req.params.id);
-	let tempDatabase = database.filter(item => item.id !== tempId);
-	database = tempDatabase;
+	database = database.filter(item => item.id !== tempId);
 	return res.status(200).json({"Message":"Success"});
 })
-//edit item
+
 app.put("/api/shopping/:id",function(req,res) {
 	let tempId = parseInt(req.params.id);
 	let item = {
@@ -50,7 +52,7 @@ app.put("/api/shopping/:id",function(req,res) {
 		id:tempId
 	}
 	for(let i=0;i<database.length;i++) {
-		if(database[i].id === tempId) {
+		if(tempId === database[i].id) {
 			database.splice(i,1,item);
 			return res.status(200).json({"Message":"Success"})
 		}
@@ -61,4 +63,3 @@ app.put("/api/shopping/:id",function(req,res) {
 app.listen(3000);
 
 console.log("Running in port 3000");
-

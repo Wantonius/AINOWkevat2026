@@ -1,5 +1,5 @@
 import {useState,useEffect} from 'react';
-import ShoppingItem  from '../models/ShoppingItem';
+import ShoppingItem from '../models/ShoppingItem';
 
 interface State {
 	list:ShoppingItem[];
@@ -10,7 +10,10 @@ interface UrlRequest {
 	action:string;
 }
 
-const useAction = () => {
+const useAction = ():{state:State,
+					  add:(item:ShoppingItem) => void,
+					  remove:(id:number) => void,
+					  edit:(item:ShoppingItem) => void} => {
 	
 	const [state,setState] = useState<State>({
 		list:[]
@@ -22,7 +25,7 @@ const useAction = () => {
 	})
 	
 	useEffect(() => {
-		getList();
+		getList()
 	},[]);
 	
 	useEffect(() => {
@@ -35,10 +38,10 @@ const useAction = () => {
 			}
 			if(response.ok) {
 				switch(urlRequest.action) {
-					case "getlist":{
+					case "getlist": {
 						const temp = await response.json();
 						if(!temp) {
-							console.log("Failed to parse json");
+							console.log("Failed to parse shopping list");
 							return;
 						}
 						const list = temp as ShoppingItem[];
@@ -47,22 +50,31 @@ const useAction = () => {
 						})
 						return;
 					}
-					case "additem":
-					case "removeitem":
+					case "additem": {
+						getList();
+						return;
+					}
+					case "removeitem": {
+						getList();
+						return;
+					}
 					case "edititem": {
 						getList();
 						return;
 					}
+					default:{
+						return;
+					}
 				}
 			} else {
-				console.log("Server responded with a status "+response.status);
+				console.log("Server responded with a status "+response.status+" "+response.statusText)
 			}
 		}
 		
 		fetchData();
 		
-	},[urlRequest]);
-	
+	},[urlRequest])
+
 	const getList = () => {
 		setUrlRequest({
 			request:new Request("/api/shopping"),
@@ -73,20 +85,20 @@ const useAction = () => {
 	const add = (item:ShoppingItem) => {
 		setUrlRequest({
 			request:new Request("/api/shopping",{
-				method:"POST",
-				headers:{
-					"Content-type":"application/json"
+				"method":"POST",
+				"headers":{
+					"Content-Type":"application/json"
 				},
-				body:JSON.stringify(item)
+				"body":JSON.stringify(item)
 			}),
 			action:"additem"
-		})	
+		})
 	}
 	
 	const remove = (id:number) => {
 		setUrlRequest({
 			request:new Request("/api/shopping/"+id,{
-				method:"DELETE"
+				"method":"DELETE"
 			}),
 			action:"removeitem"
 		})
@@ -95,17 +107,17 @@ const useAction = () => {
 	const edit = (item:ShoppingItem) => {
 		setUrlRequest({
 			request:new Request("/api/shopping/"+item.id,{
-				method:"PUT",
-				headers:{
-					"Content-type":"application/json"
+				"method":"PUT",
+				"headers":{
+					"Content-Type":"application/json"
 				},
-				body:JSON.stringify(item)
+				"body":JSON.stringify(item)
 			}),
 			action:"edititem"
 		})
 	}
 	
-	return {state,add,remove,edit}
+	return {state,add,remove,edit};
 }
 
 export default useAction;

@@ -2,6 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "backend for shopping app",
+  "keywords": [
+    "express",
+    "node",
+    "react",
+    "mongodb"
+  ],
   "license": "MIT",
   "author": "Erno",
   "type": "commonjs",

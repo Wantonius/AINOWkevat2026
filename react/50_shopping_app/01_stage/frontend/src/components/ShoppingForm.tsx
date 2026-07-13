@@ -1,18 +1,18 @@
 import React,{useState} from 'react';
 import ShoppingItem from '../models/ShoppingItem';
 
+interface Props {
+	add(item:ShoppingItem):void;
+}
+
 interface State {
 	type:string;
 	count:number;
 	price:number;
 }
 
-interface Props {
-	add(item:ShoppingItem):void;
-}
-
 const ShoppingForm = (props:Props) => {
-	
+
 	const [state,setState] = useState<State>({
 		type:"",
 		count:0,
@@ -39,8 +39,11 @@ const ShoppingForm = (props:Props) => {
 		})
 	}
 	return(
-		<div style={{width:"40%",backgroundColor:"lightblue",margin:"auto",textAlign:"center"}}>
-			<form onSubmit={onSubmit} className="m-3">
+		<div style={{"maxWidth":"40%",
+					"margin":"auto",
+					"textAlign":"center",
+					"backgroundColor":"green"}}>
+			<form className="m-3" onSubmit={onSubmit}>
 				<label htmlFor="type" className="form-label">Type</label>
 				<input type="text"
 						name="type"
