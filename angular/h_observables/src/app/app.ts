@@ -10,15 +10,15 @@ import {ObservableService} from './observableservice.service';
 export class App {
 	protected readonly title = signal('h_observables');
 
-	message:string = "";
+	message = signal<string>("");
 	
 	constructor(private obsservice:ObservableService) {}
 
 	startObserving() {
 		this.obsservice.getObservable().subscribe({
-			next:(value) => {this.message = "observable value:"+value},
-			error:(error) => {this.message = "Error occured:"+error},
-			complete:() => {this.message = "Done"}
+			next:(value) => {this.message.set("observable value:"+value)},
+			error:(error) => {this.message.set("Error occured:"+error)},
+			complete:() => {this.message.set("Done")}
 		})
 	}
 }
